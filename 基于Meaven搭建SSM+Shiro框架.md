@@ -342,6 +342,8 @@
     <!-- 必须改为true，即使用cglib方式为Action创建代理对象。默认值为false，使用JDK创建代理对象，会造成问题 -->  
     	<property name="proxyTargetClass" value="true"></property>  
   </bean>  
+  
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor"></bean> 
   ```
 
 
