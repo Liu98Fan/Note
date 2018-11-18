@@ -228,6 +228,16 @@
   </bean> 
   ```
 
+- shiro开启spring拦截器
+
+  ```xml
+  <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor" />
+  <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+          <property name="securityManager" ref="securityManager" />
+  </bean>
+  ```
+
 ##### spring-mybatis.xml
 
 ​	接下来就是配置数据持久层框架的配置，其实就是一些数据源等等的配置
