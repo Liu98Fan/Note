@@ -218,3 +218,59 @@ public class MyRealm extends AuthenticatingRealm {
 	}
 ```
 
+### 三、登陆授权
+
+讲完认证，接下来就是授权操作。
+
+之前认证的时候我们讲到自定义Realm要继承AuthenticatingRealm来实现它的抽象方法，授权的时候也要继承一个授权类，可是java无法多继承，所以可以直接继承AuthorzingRealm，它包含了一个授权一个认证的抽象方法。
+
+![](C:\Users\LIUFAN\Desktop\笔记\Note\我的笔记_files\SSM+shiro9.png)
+
+接下来就进行授权：
+
+其实就是多实现一个方法
+
+```java
+protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
+		// TODO Auto-generated method stub
+		User principal = (User)principals.getPrimaryPrincipal();
+		String username = principal.getUsername();
+		Set<String> roles = new HashSet<String>();
+		if(username.equals("shagou")){
+			roles.add("user");
+		}else if (username.equals("admin")){
+			roles.add("user");
+			roles.add("admin");
+		}
+		return new SimpleAuthorizationInfo(roles);
+	}
+```
+
+这里分别设置了有user和admin两个角色，对应shagou和admin两个账号，密码都是123456。
+
+前端页面使用相应的shiro标签：
+
+注意引入命名空间：
+
+```html
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags"%>
+```
+
+然后使用标签：
+
+```html
+<html>
+<%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags"%>
+<body>
+<h2>Hello World!</h2>
+<shiro:hasRole name="user"><a href="/SSM-Shiro/Test/user">user.jsp</a></shiro:hasRole>
+<br>
+<shiro:hasRole name="admin"><a href="/SSM-Shiro/Test/admin">admin.jsp</a></shiro:hasRole>
+<a href="/SSM-Shiro/user/logout">logout</a>
+</body>
+</html>
+
+```
+
+至此，一个完整的授权过程就结束了
+
