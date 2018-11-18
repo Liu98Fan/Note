@@ -256,7 +256,7 @@ protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principal
 <%@ taglib prefix="shiro" uri="http://shiro.apache.org/tags"%>
 ```
 
-然后使用标签：
+#### 使用标签
 
 ```html
 <html>
@@ -273,4 +273,49 @@ protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principal
 ```
 
 至此，一个完整的授权过程就结束了
+
+#### 使用注解
+
+也可以在方法前面使用相应的注解来进行权限控制
+
+```java
+	@RequiresRoles({"admin"})
+	@RequestMapping("/hello")
+	
+	public String sayHello() {
+		Subject su = SecurityUtils.getSubject();
+		
+		return "admin";
+	}
+```
+
+
+
+### 四、一些问题：
+
+#### 1、注解失效
+
+不管怎么写权限注解都能进入方法，简单说就是shiro并没有把没有权限的用户拦截下来，那么就要考虑是否是shiro的配置文件出现了问题。必要注解是以下：
+
+```xml
+<!--shiro的配置文件-->
+<!-- lifecycle -->
+<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor" />  
+
+<!-- 开启shiro的注解支持 -->  
+<bean id="defaultAdvisorAutoProxyCreator" class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator">  
+  <!-- 必须改为true，即使用cglib方式为Action创建代理对象。默认值为false，使用JDK创建代理对象，会造成问题 -->  
+  	<property name="proxyTargetClass" value="true"></property>  
+</bean>  
+ <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor"></bean> 
+```
+
+```xml
+<!--spring的配置文件-->
+<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+        depends-on="lifecycleBeanPostProcessor" />
+<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager" />
+</bean>
+```
 
